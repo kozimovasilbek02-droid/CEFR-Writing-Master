@@ -199,15 +199,15 @@
                 }
                 setIsAnalyzing(true);
                 setError(null);
-                const task = scenario.tasks[activeTask];
+                const task = scenario?.tasks?.[activeTask];
                 
                 const prompt = `You are Gemini, acting as a strict Senior Cambridge CEFR Examiner. 
                 Analyze the following student writing submission with high precision.
                 
-                Context: ${scenario.mainContext}
-                Task Instruction: ${task.instruction}
-                Target CEFR Level: ${task.cefrLevel || (activeTask === "1.1" ? "B1" : "B2")}
-                Word Count Target: ${task.wordLimit}
+                Context: ${scenario?.mainContext}
+                Task Instruction: ${task?.instruction}
+                Target CEFR Level: ${task?.cefrLevel || (activeTask === "1.1" ? "B1" : "B2")}
+                Word Count Target: ${task?.wordLimit}
                 Student Text: "${text}"
                 
                 Evaluate strictly based on the 4 official Cambridge criteria:
@@ -320,7 +320,7 @@
                 return new Blob([wavBuffer], { type: 'audio/wav' });
             };
 
-            const currentTask = scenario.tasks[activeTask];
+            const currentTask = scenario?.tasks?.[activeTask];
 
             const CriterionBar = ({ label, score, comment }) => (
                 <div className="space-y-2 group">
@@ -435,15 +435,15 @@
                             <Info className="w-4 h-4" /> Scenario Background
                             </div>
                             <div className="bg-slate-50 p-6 rounded-2xl border-l-4 border-indigo-500 text-slate-700 font-medium">
-                            {scenario.mainContext}
+                            {scenario?.mainContext}
                             </div>
                         </div>
 
                         <div className="mb-8">
-                            <h2 className="text-2xl font-black text-slate-800 mb-2">{currentTask.type}</h2>
-                            <p className="text-slate-500 mb-6">{currentTask.instruction}</p>
+                            <h2 className="text-2xl font-black text-slate-800 mb-2">{currentTask?.type}</h2>
+                            <p className="text-slate-500 mb-6">{currentTask?.instruction}</p>
                             <div className="flex flex-wrap gap-2">
-                            {currentTask.requirements.map((req, i) => (
+                            {currentTask?.requirements?.map((req, i) => (
                                 <div key={i} className="bg-indigo-50/50 text-indigo-600 text-[11px] font-bold px-3 py-1.5 rounded-lg border border-indigo-100 flex items-center gap-2">
                                 <CheckCircle className="w-3 h-3" /> {req}
                                 </div>
@@ -459,8 +459,8 @@
                             className="w-full h-80 p-8 rounded-[1.5rem] border-2 border-slate-100 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50 transition-all text-lg leading-relaxed text-slate-800 bg-slate-50/30"
                             />
                             <div className="absolute bottom-6 right-6">
-                            <div className={`px-4 py-1.5 rounded-full text-xs font-black shadow-sm border ${wordCount < currentTask.minWords || wordCount > currentTask.maxWords ? 'bg-orange-50 text-orange-600 border-orange-100' : 'bg-emerald-50 text-emerald-600 border-emerald-100'}`}>
-                                {wordCount} / {currentTask.targetWords} WORDS
+                            <div className={`px-4 py-1.5 rounded-full text-xs font-black shadow-sm border ${(wordCount < (currentTask?.minWords || 0) || wordCount > (currentTask?.maxWords || 1000)) ? 'bg-orange-50 text-orange-600 border-orange-100' : 'bg-emerald-50 text-emerald-600 border-emerald-100'}`}>
+                                {wordCount} / {currentTask?.targetWords} WORDS
                             </div>
                             </div>
                         </div>
@@ -587,5 +587,4 @@
         root.render(<App />);
     </script>
 </body>
-
 </html>
