@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CEFR Writing Master AI</title>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-[#f8fafc]">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // --- ICONS (Lucide React Replacements for Browser) ---
+        const IconBase = ({ d, className, ...props }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
+                {d}
+            </svg>
+        );
+
+        const BookOpen = (p) => <IconBase {...p} d={<><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></>} />;
+        const Edit3 = (p) => <IconBase {...p} d={<><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></>} />;
+        const Send = (p) => <IconBase {...p} d={<><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></>} />;
+        const CheckCircle = (p) => <IconBase {...p} d={<><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></>} />;
+        const AlertCircle = (p) => <IconBase {...p} d={<><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></>} />;
+        const Loader2 = (p) => <IconBase {...p} d={<><path d="M21 12a9 9 0 1 1-6.219-8.56"/></>} />;
+        const Award = (p) => <IconBase {...p} d={<><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></>} />;
+        const RefreshCw = (p) => <IconBase {...p} d={<><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></>} />;
+        const Info = (p) => <IconBase {...p} d={<><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></>} />;
+        const MessageSquare = (p) => <IconBase {...p} d={<><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></>} />;
+        const Mail = (p) => <IconBase {...p} d={<><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></>} />;
+        const Lightbulb = (p) => <IconBase {...p} d={<><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 16.5 8 4.5 4.5 0 0 0 12 3.5a4.5 4.5 0 0 0-4.5 4.5c0 1.12.38 2.13 1 3.08.12.17.12.38 0 .55l-.77 1.15A5.02 5.02 0 0 1 7 15.5V17c0 .55.45 1 1 1h8c.55 0 1-.45 1-1v-1.5c0-.86-.3-1.69-.91-2.5z"/></>} />;
+        const Zap = (p) => <IconBase {...p} d={<><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></>} />;
+        const Volume2 = (p) => <IconBase {...p} d={<><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></>} />;
+        const Target = (p) => <IconBase {...p} d={<><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></>} />;
+        const TrendingUp = (p) => <IconBase {...p} d={<><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></>} />;
+        const BarChart3 = (p) => <IconBase {...p} d={<><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></>} />;
+        const ChevronRight = (p) => <IconBase {...p} d={<><polyline points="9 18 15 12 9 6"/></>} />;
+        const BrainCircuit = (p) => <IconBase {...p} d={<><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M9 13a4.5 4.5 0 0 0 3-4"/><path d="M6.003 5.125A3 3 0 0 0 6.401 6.5"/><path d="M3.477 10.896a4 4 0 0 1 .585-.396"/><path d="M6 18a4 4 0 0 1-1.97-3.284"/><path d="M12 18a4 4 0 0 0 3.203-6.181"/><path d="M12 5a4.5 4.5 0 0 0-1.161 3.333"/></>} />;
+        const KeyIcon = (p) => <IconBase {...p} d={<><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4" /></>} />;
+        const X = (p) => <IconBase {...p} d={<><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></>} />;
+
+        // --- APP LOGIC ---
+
+        const INITIAL_SCENARIO = {
+            mainContext: "You recently received a message from the youth center. The manager asked students: What equipment should we use? What space should be created? Should we create areas for gaming and relaxing? How can we make it more welcoming?",
+            tasks: {
+                "1.1": {
+                    type: "Short Note",
+                    recipient: "Friend",
+                    instruction: "Write a short note to your friend, who is also a member of the youth center. Tell them how you feel about the center and what improvements you think the youth center needs.",
+                    requirements: ["Express your feelings about the center", "Suggest specific improvements"],
+                    wordLimit: "About 50 words",
+                    targetWords: 50,
+                    minWords: 35,
+                    maxWords: 70,
+                    cefrLevel: "B1"
+                },
+                "1.2": {
+                    type: "Formal Letter",
+                    recipient: "Manager",
+                    instruction: "Write a letter to the youth center manager. Explain your feelings about the current center's conditions, describe what improvements you think should be made and mention how these changes would help participants.",
+                    requirements: ["Explain feelings about current conditions", "Describe specific improvements", "Mention benefits for participants"],
+                    wordLimit: "120–150 words",
+                    targetWords: 135,
+                    minWords: 110,
+                    maxWords: 170,
+                    cefrLevel: "B2"
+                }
+            }
+        };
+
+        const App = () => {
+            // API Key State - LocalStorage dan o'qish
+            const [apiKey, setApiKey] = React.useState(() => localStorage.getItem('gemini_api_key') || '');
+            const [showKeyModal, setShowKeyModal] = React.useState(() => !localStorage.getItem('gemini_api_key'));
+            const [tempKey, setTempKey] = React.useState('');
+
+            const [activeTask, setActiveTask] = React.useState("1.1");
+            const [scenario, setScenario] = React.useState(INITIAL_SCENARIO);
+            const [text, setText] = React.useState('');
+            const [isAnalyzing, setIsAnalyzing] = React.useState(false);
+            const [isGenerating, setIsGenerating] = React.useState(false);
+            const [isSpeaking, setIsSpeaking] = React.useState(false);
+            
+            const [feedback, setFeedback] = React.useState(null);
+            const [error, setError] = React.useState(null);
+            const [wordCount, setWordCount] = React.useState(0);
+
+            React.useEffect(() => {
+                const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+                setWordCount(words);
+            }, [text]);
+
+            // Save API Key
+            const handleSaveKey = () => {
+                if (tempKey.trim().length > 10) {
+                    localStorage.setItem('gemini_api_key', tempKey.trim());
+                    setApiKey(tempKey.trim());
+                    setShowKeyModal(false);
+                    setError(null);
+                } else {
+                    setError("Iltimos, to'g'ri API kalit kiriting.");
+                }
+            };
+
+            const callGemini = async (payload, endpoint = "generateContent", model = "gemini-2.5-flash-preview-09-2025", retryCount = 0) => {
+                if (!apiKey) {
+                    setShowKeyModal(true);
+                    throw new Error("API Kaliti kiritilmagan.");
+                }
+
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:${endpoint}?key=${apiKey}`;
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    if (!response.ok) {
+                        const errData = await response.json().catch(() => ({}));
+                        if (response.status === 400 && errData.error?.message?.includes('API key')) {
+                             setShowKeyModal(true);
+                             throw new Error("API Kaliti noto'g'ri. Iltimos tekshirib qaytadan kiriting.");
+                        }
+                        if (response.status === 429 && retryCount < 5) {
+                            const delay = Math.pow(2, retryCount) * 1000;
+                            await new Promise(resolve => setTimeout(resolve, delay));
+                            return callGemini(payload, endpoint, model, retryCount + 1);
+                        }
+                        throw new Error(errData.error?.message || 'API Xatolik yuz berdi');
+                    }
+                    return await response.json();
+                } catch (err) {
+                    throw err;
+                }
+            };
+
+            const generateNewScenario = async () => {
+                if (!apiKey) { setShowKeyModal(true); return; }
+                setIsGenerating(true);
+                setError(null);
+                const prompt = `Create a CEFR exam writing scenario. Main context and two tasks (1.1: 50 words note, 1.2: 120-150 words formal letter). Return JSON ONLY following the standard format.`;
+                try {
+                    const result = await callGemini({
+                        contents: [{ parts: [{ text: prompt }] }],
+                        generationConfig: { 
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: "OBJECT",
+                            properties: {
+                            mainContext: { type: "STRING" },
+                            tasks: {
+                                type: "OBJECT",
+                                properties: {
+                                "1.1": { type: "OBJECT", properties: { type: { type: "STRING" }, instruction: { type: "STRING" }, requirements: { type: "ARRAY", items: { type: "STRING" } }, wordLimit: { type: "STRING" }, targetWords: { type: "NUMBER" }, minWords: { type: "NUMBER" }, maxWords: { type: "NUMBER" }, cefrLevel: { type: "STRING" } } },
+                                "1.2": { type: "OBJECT", properties: { type: { type: "STRING" }, instruction: { type: "STRING" }, requirements: { type: "ARRAY", items: { type: "STRING" } }, wordLimit: { type: "STRING" }, targetWords: { type: "NUMBER" }, minWords: { type: "NUMBER" }, maxWords: { type: "NUMBER" }, cefrLevel: { type: "STRING" } } }
+                                }
+                            }
+                            }
+                        }
+                        }
+                    });
+                    setScenario(JSON.parse(result.candidates[0].content.parts[0].text));
+                    setText('');
+                    setFeedback(null);
+                } catch (err) {
+                    setError("Xatolik: " + err.message);
+                } finally {
+                    setIsGenerating(false);
+                }
+            };
+
+            const handleAnalyze = async () => {
+                if (!apiKey) { setShowKeyModal(true); return; }
+                if (wordCount < 5) {
+                    setError("Please write more content.");
+                    return;
+                }
+                setIsAnalyzing(true);
+                setError(null);
+                const task = scenario.tasks[activeTask];
+                
+                const prompt = `You are Gemini, acting as a strict Senior Cambridge CEFR Examiner. 
+                Analyze the following student writing submission with high precision.
+                
+                Context: ${scenario.mainContext}
+                Task Instruction: ${task.instruction}
+                Target CEFR Level: ${task.cefrLevel || (activeTask === "1.1" ? "B1" : "B2")}
+                Word Count Target: ${task.wordLimit}
+                Student Text: "${text}"
+                
+                Evaluate strictly based on the 4 official Cambridge criteria:
+                1. Content (Did they do exactly what was asked? All points covered?)
+                2. Communicative Achievement (Is the tone appropriate? Is it written like a real letter/note?)
+                3. Organization (Paragraphs, linking words, flow)
+                4. Language (Vocabulary range and Grammar accuracy)
+
+                Return JSON strictly following this schema:
+                {
+                    "overallScore": "string (e.g. 'Band B2 - Pass' or 'Band B1 - Merit')",
+                    "criteria": {
+                        "Content": { "score": number (0-5, can use decimals like 3.5), "comment": "string (Deep analysis of task fulfillment)" },
+                        "CommunicativeAchievement": { "score": number (0-5), "comment": "string (Analysis of register and tone)" },
+                        "Organization": { "score": number (0-5), "comment": "string (Analysis of cohesion)" },
+                        "Language": { "score": number (0-5), "comment": "string (Analysis of grammar/vocab)" }
+                    },
+                    "strengths": ["string", "string"],
+                    "improvements": ["string", "string"],
+                    "mistakesSpotlight": [
+                        { "original": "string", "correction": "string", "reason": "string (Explain WHY it is wrong)" }
+                    ],
+                    "nextLevelTips": ["string (Actionable advice to jump to the next band)"],
+                    "correctedText": "string (A perfect model answer maintaining the student's original ideas but fixing all errors)"
+                }`;
+                
+                try {
+                    const result = await callGemini({
+                        contents: [{ parts: [{ text: prompt }] }],
+                        generationConfig: { 
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: "OBJECT",
+                            properties: {
+                            overallScore: { type: "STRING" },
+                            criteria: {
+                                type: "OBJECT",
+                                properties: {
+                                Content: { type: "OBJECT", properties: { score: { type: "NUMBER" }, comment: { type: "STRING" } } },
+                                CommunicativeAchievement: { type: "OBJECT", properties: { score: { type: "NUMBER" }, comment: { type: "STRING" } } },
+                                Organization: { type: "OBJECT", properties: { score: { type: "NUMBER" }, comment: { type: "STRING" } } },
+                                Language: { type: "OBJECT", properties: { score: { type: "NUMBER" }, comment: { type: "STRING" } } }
+                                }
+                            },
+                            strengths: { type: "ARRAY", items: { type: "STRING" } },
+                            improvements: { type: "ARRAY", items: { type: "STRING" } },
+                            mistakesSpotlight: { type: "ARRAY", items: { type: "OBJECT", properties: { original: { type: "STRING" }, correction: { type: "STRING" }, reason: { type: "STRING" } } } },
+                            nextLevelTips: { type: "ARRAY", items: { type: "STRING" } },
+                            correctedText: { type: "STRING" }
+                            }
+                        }
+                        }
+                    });
+                    setFeedback(JSON.parse(result.candidates[0].content.parts[0].text));
+                } catch (err) {
+                    setError("Xatolik: " + err.message);
+                } finally {
+                    setIsAnalyzing(false);
+                }
+            };
+
+            const handleSpeak = async (content) => {
+                if (!apiKey) { setShowKeyModal(true); return; }
+                if (isSpeaking) return;
+                setIsSpeaking(true);
+                try {
+                    const result = await callGemini({
+                        contents: [{ parts: [{ text: content }] }],
+                        generationConfig: {
+                        responseModalities: ["AUDIO"],
+                        speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: "Puck" } } }
+                        }
+                    }, "generateContent", "gemini-2.5-flash-preview-tts");
+
+                    const audioData = result.candidates[0].content.parts[0].inlineData.data;
+                    const sampleRate = parseInt(result.candidates[0].content.parts[0].inlineData.mimeType.match(/rate=(\d+)/)?.[1] || "24000");
+                    const wavBlob = pcmToWav(audioData, sampleRate);
+                    const audio = new Audio(URL.createObjectURL(wavBlob));
+                    audio.onended = () => setIsSpeaking(false);
+                    audio.play();
+                } catch (err) {
+                    setError("Ovozli o'qishda xatolik: " + err.message);
+                    setIsSpeaking(false);
+                }
+            };
+
+            const pcmToWav = (base64Data, sampleRate) => {
+                const binaryString = window.atob(base64Data);
+                const buffer = new ArrayBuffer(binaryString.length);
+                const view = new Uint8Array(buffer);
+                for (let i = 0; i < binaryString.length; i++) view[i] = binaryString.charCodeAt(i);
+                const wavBuffer = new ArrayBuffer(44 + buffer.byteLength);
+                const wavView = new DataView(wavBuffer);
+                const writeString = (offset, string) => { for (let i = 0; i < string.length; i++) wavView.setUint8(offset + i, string.charCodeAt(i)); };
+                writeString(0, 'RIFF');
+                wavView.setUint32(4, 36 + buffer.byteLength, true);
+                writeString(8, 'WAVE');
+                writeString(12, 'fmt ');
+                wavView.setUint32(16, 16, true);
+                wavView.setUint16(20, 1, true);
+                wavView.setUint16(22, 1, true);
+                wavView.setUint32(24, sampleRate, true);
+                wavView.setUint32(28, sampleRate * 2, true);
+                wavView.setUint16(32, 2, true);
+                wavView.setUint16(34, 16, true);
+                writeString(36, 'data');
+                wavView.setUint32(40, buffer.byteLength, true);
+                const dataView = new DataView(buffer);
+                for (let i = 0; i < buffer.byteLength; i++) wavView.setUint8(44 + i, dataView.getUint8(i));
+                return new Blob([wavBuffer], { type: 'audio/wav' });
+            };
+
+            const currentTask = scenario.tasks[activeTask];
+
+            const CriterionBar = ({ label, score, comment }) => (
+                <div className="space-y-2 group">
+                <div className="flex justify-between items-end">
+                    <span className="text-xs font-black text-slate-500 uppercase tracking-widest">{label}</span>
+                    <span className="text-sm font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md">{score || 0}/5</span>
+                </div>
+                <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                    <div 
+                    className="h-full bg-indigo-500 rounded-full transition-all duration-1000 ease-out"
+                    style={{ width: `${((score || 0) / 5) * 100}%` }}
+                    ></div>
+                </div>
+                <p className="text-[11px] text-slate-500 leading-tight italic group-hover:text-slate-700 transition-colors">{comment || "No comment provided."}</p>
+                </div>
+            );
+
+            return (
+                <div className="min-h-screen text-slate-900 font-sans p-4 md:p-8 relative">
+                
+                {/* API Key Modal */}
+                {showKeyModal && (
+                    <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                        <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl animate-in fade-in zoom-in duration-300">
+                            <div className="flex justify-between items-center mb-6">
+                                <h3 className="text-xl font-black text-slate-800 flex items-center gap-2">
+                                    <KeyIcon className="w-6 h-6 text-indigo-600" />
+                                    API Kalitni kiriting
+                                </h3>
+                                {apiKey && <button onClick={() => setShowKeyModal(false)}><X className="w-6 h-6 text-slate-400 hover:text-slate-600" /></button>}
+                            </div>
+                            <p className="text-sm text-slate-500 mb-4">
+                                Ilovadan foydalanish uchun bepul <b>Google Gemini API Key</b> kerak. Uni <a href="https://aistudio.google.com/app/apikey" target="_blank" className="text-indigo-600 font-bold underline">bu yerdan oling</a>.
+                            </p>
+                            <input 
+                                type="password" 
+                                placeholder="AIzaSy..." 
+                                value={tempKey}
+                                onChange={(e) => setTempKey(e.target.value)}
+                                className="w-full p-4 rounded-xl border-2 border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50 mb-4 font-mono text-sm"
+                            />
+                            <button 
+                                onClick={handleSaveKey}
+                                className="w-full py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-all shadow-lg"
+                            >
+                                Kalitni saqlash
+                            </button>
+                            {apiKey && (
+                                <button 
+                                    onClick={() => setShowKeyModal(false)}
+                                    className="w-full mt-2 py-3 text-slate-500 font-bold hover:text-slate-700"
+                                >
+                                    Bekor qilish
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                <div className="max-w-7xl mx-auto">
+                    
+                    {/* Header Section */}
+                    <header className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-8">
+                    <div className="flex items-center gap-4">
+                        <div className="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-xl shadow-indigo-100 rotate-2">
+                        <BrainCircuit className="text-white w-8 h-8" />
+                        </div>
+                        <div>
+                        <h1 className="text-3xl font-black text-slate-800 tracking-tighter">GEMINI WRITING AI</h1>
+                        <p className="text-xs font-bold text-indigo-500 uppercase tracking-widest">Professional Exam Examiner</p>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-3">
+                        <button
+                            onClick={() => { setTempKey(apiKey); setShowKeyModal(true); }}
+                            className="bg-white text-slate-600 px-4 py-3 rounded-xl font-bold border border-slate-200 hover:bg-slate-50 transition-all flex items-center gap-2"
+                            title="API Kalitni o'zgartirish"
+                        >
+                            <KeyIcon className="w-4 h-4" />
+                        </button>
+
+                        <div className="flex bg-white p-1 rounded-xl shadow-sm border border-slate-200">
+                        {["1.1", "1.2"].map(task => (
+                            <button
+                            key={task}
+                            onClick={() => { setActiveTask(task); setFeedback(null); setText(''); }}
+                            className={`px-6 py-2 rounded-lg font-bold transition-all ${activeTask === task ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-500'}`}
+                            >
+                            Task {task}
+                            </button>
+                        ))}
+                        </div>
+                        <button
+                        onClick={generateNewScenario}
+                        disabled={isGenerating}
+                        className="bg-slate-900 text-white px-5 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-indigo-700 transition-all disabled:opacity-50"
+                        >
+                        <RefreshCw className={`w-4 h-4 ${isGenerating ? 'animate-spin' : ''}`} />
+                        NEW TOPIC
+                        </button>
+                    </div>
+                    </header>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                    
+                    {/* Main Writing Area */}
+                    <div className="lg:col-span-7 space-y-6">
+                        <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-200/60">
+                        <div className="mb-6">
+                            <div className="flex items-center gap-2 text-indigo-600 font-bold text-[10px] uppercase tracking-widest mb-3">
+                            <Info className="w-4 h-4" /> Scenario Background
+                            </div>
+                            <div className="bg-slate-50 p-6 rounded-2xl border-l-4 border-indigo-500 text-slate-700 font-medium">
+                            {scenario.mainContext}
+                            </div>
+                        </div>
+
+                        <div className="mb-8">
+                            <h2 className="text-2xl font-black text-slate-800 mb-2">{currentTask.type}</h2>
+                            <p className="text-slate-500 mb-6">{currentTask.instruction}</p>
+                            <div className="flex flex-wrap gap-2">
+                            {currentTask.requirements.map((req, i) => (
+                                <div key={i} className="bg-indigo-50/50 text-indigo-600 text-[11px] font-bold px-3 py-1.5 rounded-lg border border-indigo-100 flex items-center gap-2">
+                                <CheckCircle className="w-3 h-3" /> {req}
+                                </div>
+                            ))}
+                            </div>
+                        </div>
+
+                        <div className="relative">
+                            <textarea
+                            value={text}
+                            onChange={(e) => setText(e.target.value)}
+                            placeholder="Start writing here..."
+                            className="w-full h-80 p-8 rounded-[1.5rem] border-2 border-slate-100 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50 transition-all text-lg leading-relaxed text-slate-800 bg-slate-50/30"
+                            />
+                            <div className="absolute bottom-6 right-6">
+                            <div className={`px-4 py-1.5 rounded-full text-xs font-black shadow-sm border ${wordCount < currentTask.minWords || wordCount > currentTask.maxWords ? 'bg-orange-50 text-orange-600 border-orange-100' : 'bg-emerald-50 text-emerald-600 border-emerald-100'}`}>
+                                {wordCount} / {currentTask.targetWords} WORDS
+                            </div>
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={handleAnalyze}
+                            disabled={isAnalyzing || text.trim().length < 5}
+                            className="w-full mt-6 bg-indigo-600 text-white font-black py-5 rounded-2xl hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100 flex items-center justify-center gap-3"
+                        >
+                            {isAnalyzing ? <><Loader2 className="w-6 h-6 animate-spin" /> ANALYZING...</> : <><Send className="w-5 h-5" /> GET GEMINI EVALUATION</>}
+                        </button>
+                        </div>
+                    </div>
+
+                    {/* Feedback Column */}
+                    <div className="lg:col-span-5 space-y-6">
+                        {!feedback && !isAnalyzing ? (
+                        <div className="bg-white rounded-[2rem] border-2 border-dashed border-slate-200 flex flex-col items-center justify-center p-12 text-center h-[700px]">
+                            <BarChart3 className="w-16 h-16 text-slate-200 mb-6" />
+                            <h3 className="text-xl font-bold text-slate-300 uppercase tracking-widest">Feedback Pending</h3>
+                            <p className="text-slate-400 mt-2 text-sm max-w-[280px]">Submit your writing to unlock deep analytical insights and CEFR band scoring.</p>
+                        </div>
+                        ) : isAnalyzing ? (
+                        <div className="bg-white rounded-[2rem] p-12 flex flex-col items-center justify-center text-center h-[700px] shadow-sm">
+                            <div className="w-24 h-24 border-8 border-indigo-50 rounded-full animate-pulse flex items-center justify-center mb-8">
+                            <Loader2 className="w-10 h-10 text-indigo-600 animate-spin" />
+                            </div>
+                            <h3 className="text-2xl font-black text-slate-800 tracking-tighter uppercase">Gemini Evaluating</h3>
+                            <p className="text-slate-400 mt-3 font-medium">Checking criteria: Content, Communication, Organization, Language...</p>
+                        </div>
+                        ) : (
+                        <div className="space-y-6 overflow-y-auto max-h-[85vh] pr-2 custom-scrollbar">
+                            
+                            {/* Score Summary Card */}
+                            <div className="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden">
+                            <div className="bg-indigo-600 p-8 text-white text-center relative">
+                                <Award className="w-12 h-12 mx-auto mb-3 text-indigo-200" />
+                                <p className="text-[10px] font-black opacity-60 uppercase tracking-[0.2em] mb-1">CEFR Band Level</p>
+                                <div className="text-4xl font-black tracking-tighter">{feedback?.overallScore || "N/A"}</div>
+                            </div>
+                            
+                            <div className="p-8 space-y-6">
+                                <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                <Target className="w-4 h-4" /> Cambridge Criteria
+                                </h4>
+                                <div className="space-y-5">
+                                <CriterionBar label="Content" score={feedback?.criteria?.Content?.score} comment={feedback?.criteria?.Content?.comment} />
+                                <CriterionBar label="Communicative Achievement" score={feedback?.criteria?.CommunicativeAchievement?.score} comment={feedback?.criteria?.CommunicativeAchievement?.comment} />
+                                <CriterionBar label="Organization" score={feedback?.criteria?.Organization?.score} comment={feedback?.criteria?.Organization?.comment} />
+                                <CriterionBar label="Language" score={feedback?.criteria?.Language?.score} comment={feedback?.criteria?.Language?.comment} />
+                                </div>
+                            </div>
+                            </div>
+
+                            {/* Mistakes Spotlight */}
+                            <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-100">
+                            <h4 className="text-sm font-black text-rose-600 uppercase tracking-widest flex items-center gap-2 mb-6">
+                                <Zap className="w-4 h-4" /> Correction Spotlight
+                            </h4>
+                            <div className="space-y-4">
+                                {feedback?.mistakesSpotlight?.length > 0 ? (
+                                feedback.mistakesSpotlight.map((m, i) => (
+                                    <div key={i} className="bg-rose-50/50 p-4 rounded-xl border border-rose-100">
+                                    <div className="flex gap-2 items-start mb-2">
+                                        <span className="text-rose-400 line-through text-xs font-medium italic">"{m?.original || ""}"</span>
+                                        <ChevronRight className="w-3 h-3 text-slate-300 mt-1" />
+                                        <span className="text-emerald-600 text-xs font-bold">"{m?.correction || ""}"</span>
+                                    </div>
+                                    <p className="text-[10px] text-slate-500 leading-tight">Reason: {m?.reason || "No reason specified."}</p>
+                                    </div>
+                                ))
+                                ) : (
+                                <p className="text-sm text-slate-400 italic">No major mistakes found.</p>
+                                )}
+                            </div>
+                            </div>
+
+                            {/* Model Answer */}
+                            <div className="bg-indigo-900 rounded-[2rem] p-8 text-white shadow-xl relative overflow-hidden">
+                            <div className="absolute top-0 right-0 p-4">
+                                <button 
+                                onClick={() => handleSpeak(feedback?.correctedText)}
+                                className="p-3 bg-white/10 hover:bg-white/20 rounded-full transition-all"
+                                disabled={isSpeaking || !feedback?.correctedText}
+                                >
+                                {isSpeaking ? <Loader2 className="w-5 h-5 animate-spin" /> : <Volume2 className="w-5 h-5" />}
+                                </button>
+                            </div>
+                            <h4 className="text-xs font-black text-indigo-300 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                <Award className="w-4 h-4" /> Model CEFR Solution
+                            </h4>
+                            <p className="text-sm leading-relaxed font-medium italic text-indigo-50">"{feedback?.correctedText || "No corrected text available."}"</p>
+                            </div>
+
+                            {/* Next Level Tips */}
+                            <div className="bg-emerald-600 rounded-[2rem] p-8 text-white shadow-lg">
+                            <h4 className="text-xs font-black text-emerald-100 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                <TrendingUp className="w-4 h-4" /> Road to Higher Band
+                            </h4>
+                            <ul className="space-y-3">
+                                {feedback?.nextLevelTips?.map((tip, i) => (
+                                <li key={i} className="text-sm font-bold flex gap-3">
+                                    <span className="text-emerald-200">→</span> {tip}
+                                </li>
+                                ))}
+                            </ul>
+                            </div>
+
+                        </div>
+                        )}
+                    </div>
+                    </div>
+                </div>
+                {error && (
+                    <div className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-rose-600 text-white px-8 py-4 rounded-2xl shadow-2xl z-50 flex items-center gap-3 font-bold animate-bounce">
+                    <AlertCircle className="w-5 h-5" /> {error}
+                    </div>
+                )}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
